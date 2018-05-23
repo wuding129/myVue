@@ -25,6 +25,12 @@ class TemplateCompiler {
     return node.nodeType === 3;
   }
 
+  toArray(fakeArr){
+    return [].slice.call(fakeArr)
+  }
+  isDirective(attrName){ // v-text
+    return attrName.indexOf('v-') >= 0;
+  }
   // ********************************************************
 
 
@@ -37,12 +43,40 @@ class TemplateCompiler {
       fragment.appendChild(child)
     }
     // 3、返回
+    return fragment;
   }
 
   compile(parent) {
+    // 1、获取子节点
+    var childNodes = parent.childNodes,
+        complier = this // 缓存当前实例，下面要用
+    // 2、遍历每一个节点
+    this.toArray(childNodes).forEach((node) => {
+      // 3、判断节点类型
+      if(complier.isElementNode(node)){
+        // 1)元素节点（解析指令）
+        complier.compileElement(node)
+
+      }
+    })
+  }
+  // 解析元素节点的指令
+  compileElement(node){
+    // 获取当前元素节点的所有属性
+    var arrs = node.attributes,
+        compiler = this;
+    // 遍历所有属性
+    this.toArray(arrs).forEach(attr => {
+      var attrName = attr.name;
+      if(compiler.isDirective(attr)){
+
+      }
+    })
+  }
+  // 解析表达式的
+  compileText(){
 
   }
-
   // ********************************************************
 
 }
