@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <div id="app">
+        <span v-text="message"></span> <br>
+        {{message}} <br>
+        <input type="text" v-mode="message">
+    </div>
+    <script src="./js/TemplateCompiler.js"></script>
+    <script src="./js/mvvm.js"></script>
+    <script>
+        var vm = new MVVM({
+          // 挂载视图
+          el: '#app',
+          // 定义数据
+          data: {
+            message: 'hello world'
+          }
+        })
+    </script>
+</body>
+</html>
