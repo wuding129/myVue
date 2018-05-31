@@ -57,6 +57,17 @@ class TemplateCompiler {
         // 1)元素节点（解析指令）
         complier.compileElement(node)
 
+      } else { // 文本节点
+        // 定义文本表达式验证规则
+        var textReg = /\{\{(.+)\}\}/
+        var expr = node.textContent // {{....}}
+
+        if(textReg.test(expr)){
+          expr = RegExp.$1
+          // 调用方法编译
+          complier.compileText(node, expr)
+        }
+
       }
     })
   }
@@ -76,12 +87,13 @@ class TemplateCompiler {
         // 指令的值就是表达式
         var expr = attr.value
 
-        CompilerUtils.text(node, compiler.vm, expr)
+        CompilerUtils[type](node, compiler.vm, expr)
       }
     })
   }
   // 解析表达式的
-  compileText(){
+  compileText(node, expr){
+    CompilerUtils.text(node, this.vm, expr)
 
   }
   // ********************************************************
@@ -96,12 +108,37 @@ CompilerUtils = {
     // 2、执行方法
     updaterFn && updaterFn(node, vm.$data[expr])
   },
+  model(node, vm, expr){
+    // 1、找到更新方法
+    var updaterFn = this.updater['modelUpdater']
+    // 2、执行方法
+    updaterFn && updaterFn(node, vm.$data[expr])
+
+    // 3、视图到模型
+    node.addEventListener('input', (e) => {
+      // 获取输入框的新值
+      var newValue = e.target.value
+
+      // 把值放入到数据
+      vm.$data[expr] = newValue
+    })
+
+    /*
+    * 视图->模型（观察者模式）
+    * 模型->视图（发布-订阅模式）
+    *
+    * */
+  },
 
   // 更新规则对象
   updater: {
     // 文本更新方法
     textUpdater(node, value){
       node.textContent = value
+    },
+    // 输入框更新方法
+    modelUpdater(node, value){
+      node.value = value // input value
     }
   }
 }
