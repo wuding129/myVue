@@ -8,11 +8,11 @@ class TemplateCompiler {
     // 判断视图存在
     if (this.el) {
       // 1、把模板内容放入内存（片段），减少dom操作，提升页面渲染性能
-      var fragment = this.node2fragment(el);
+      var fragment = this.node2fragment(this.el);
       // 2、解析模板
       this.compile(fragment);
       // 3、把内存的结果返回到页面
-      el.appendChild(fragment);
+      this.el.appendChild(fragment);
     }
   }
 
@@ -68,8 +68,15 @@ class TemplateCompiler {
     // 遍历所有属性
     this.toArray(arrs).forEach(attr => {
       var attrName = attr.name;
-      if(compiler.isDirective(attr)){
+      if(compiler.isDirective(attrName)){
+        // 指令类型
+        var type = attrName.substr(2) // v-text v-model
+        // var type = attrName.split('-')[1]
 
+        // 指令的值就是表达式
+        var expr = attr.value
+
+        CompilerUtils.text(node, compiler.vm, expr)
       }
     })
   }
@@ -79,4 +86,22 @@ class TemplateCompiler {
   }
   // ********************************************************
 
+}
+
+CompilerUtils = {
+  // 解析text
+  text(node, vm, expr){
+    // 1、找到更新方法
+    var updaterFn = this.updater['textUpdater']
+    // 2、执行方法
+    updaterFn && updaterFn(node, vm.$data[expr])
+  },
+
+  // 更新规则对象
+  updater: {
+    // 文本更新方法
+    textUpdater(node, value){
+      node.textContent = value
+    }
+  }
 }

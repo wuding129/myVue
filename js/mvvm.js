@@ -8,7 +8,7 @@ class MVVM {
     // 判断视图是否存在
     if (this.$el) {
       // 创建模板编译器， 来解析视图
-      this.$compiler = new TemplateCompiler($el, $vm)
+      this.$compiler = new TemplateCompiler(this.$el, this.$vm)
     }
   }
 }

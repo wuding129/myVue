@@ -10,8 +10,9 @@
 <body>
     <div id="app">
         <span v-text="message"></span> <br>
-        {{message}} <br>
-        <input type="text" v-mode="message">
+        <span v-text="username"></span> <br>
+        <!--{{message}} <br>-->
+        <!--<input type="text" v-mode="message">-->
     </div>
     <script src="./js/TemplateCompiler.js"></script>
     <script src="./js/mvvm.js"></script>
@@ -21,7 +22,8 @@
           el: '#app',
           // 定义数据
           data: {
-            message: 'hello world'
+            message: 'hello world',
+            username: 'wu'
           }
         })
     </script>
