@@ -103,17 +103,30 @@ class TemplateCompiler {
 CompilerUtils = {
   // 解析text
   text(node, vm, expr){
+    /* 第一次 */
     // 1、找到更新方法
     var updaterFn = this.updater['textUpdater']
     // 2、执行方法
     updaterFn && updaterFn(node, vm.$data[expr])
+    /* 第n+1次 */
+    new Watcher(vm, expr, (newValue) => {
+      // 发出订阅时，按照之前的规则对节点进行更新
+      updaterFn && updaterFn(node, newValue)
+
+    })
+
   },
   model(node, vm, expr){
     // 1、找到更新方法
     var updaterFn = this.updater['modelUpdater']
     // 2、执行方法
     updaterFn && updaterFn(node, vm.$data[expr])
+    /* 第n+1次 */
+    new Watcher(vm, expr, (newValue) => {
+      // 发出订阅时，按照之前的规则对节点进行更新
+      updaterFn && updaterFn(node, newValue)
 
+    })
     // 3、视图到模型
     node.addEventListener('input', (e) => {
       // 获取输入框的新值
@@ -121,6 +134,7 @@ CompilerUtils = {
 
       // 把值放入到数据
       vm.$data[expr] = newValue
+      console.log(vm.$data[expr])
     })
 
     /*

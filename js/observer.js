@@ -22,6 +22,7 @@ class Observer {
   }
 
   defineReactive(obj, key, val){
+    var dep = new Dep()
     // 重新定义
     // 1)目标对象
     // 2)属性名
@@ -33,6 +34,9 @@ class Observer {
       configurable: false,
       // 特权方法：getter 取值
       get(){
+        // var watcher = Dep.target
+        // 针对watcher创建时，直接完成发布订阅的添加
+        Dep.target && dep.addSub(Dep.target)
         return val
       },
 
@@ -40,9 +44,36 @@ class Observer {
       set(newVal){
         // 新值覆盖旧值
         val = newVal
+
+        dep.notify()
       }
 
 
     })
   }
+}
+
+
+// 创建发布者
+  // 1.管理订阅者
+  // 2.通知
+class Dep{
+  constructor(){
+    this.subs = []
+
+  }
+  // 添加订阅
+  // 传的sub就是watcher实例
+  addSub(sub){
+    this.subs.push(sub)
+  }
+
+  // 通知
+  notify(){
+    this.subs.forEach((sub) => {
+      sub.update()
+    })
+  }
+
+
 }
